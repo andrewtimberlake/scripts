@@ -1,45 +1,114 @@
 require 'test_helper'
 
 class <%= controller_class_name %>ControllerTest < ActionController::TestCase
-  test "should get index" do
-    get :index
-    assert_response :success
-    assert_not_nil assigns(:<%= table_name %>)
+  def setup
+    #TODO: Create an entry for testing here (or in a fixture, or with a factory like Factory Girl)
+    <%= class_name %>.create()
   end
 
-  test "should get new" do
-    get :new
-    assert_response :success
+  context "on GET to :index" do
+    setup {
+       get :index
+    }
+
+    should_respond_with :success
+    should_assign_to :<%= table_name %>, :equals => "@<%= table_name %>"
+    should_not_set_the_flash
+    should_render_template :index
   end
 
-  test "should create <%= file_name %>" do
-    assert_difference('<%= class_name %>.count') do
-      post :create, :<%= file_name %> => { }
+  context "on GET to :new" do
+    setup {
+      get :new
+    }
+
+    should_respond_with :success
+    should_assign_to :<%= singular_name %>, :equals => "@<%= singular_name %>"
+    should_not_set_the_flash
+    should_render_template :new
+    should_render_a_form
+  end
+
+  context "on POST to :create" do
+    context "with no data" do
+      setup {
+        post :create, :<%= file_name %> => {}
+      }
+
+      should_respond_with :success
+      should_assign_to :<%= singular_name %>, :equals => "@<%= singular_name %>"
+      should_render_template :new
+      should_render_a_form
     end
 
-    assert_redirected_to <%= file_name %>_path(assigns(:<%= file_name %>))
+    context "with data" do
+      setup {
+        post :create, :<%= file_name %> => {
+          #TODO: fill in values for create
+        }
+      }
+
+      should_respond_with 303
+      should_redirect_to "@<%= singular_name %>"
+      should_set_the_flash_to /successfully created/
+    end
   end
 
-  test "should show <%= file_name %>" do
-    get :show, :id => <%= table_name %>(:one).id
-    assert_response :success
+  context "on GET to :show" do
+    setup {
+      get :show, :id => <%= class_name %>.first.id
+    }
+
+    should_respond_with :success
+    should_assign_to :<%= singular_name %>, :equals => "@<%= singular_name %>"
+    should_not_set_the_flash
+    should_render_template :show
   end
 
-  test "should get edit" do
-    get :edit, :id => <%= table_name %>(:one).id
-    assert_response :success
+  context "on GET to :edit" do
+    setup {
+      get :edit, :id => <%= class_name %>.first.id
+    }
+
+    should_respond_with :success
+    should_assign_to :<%= singular_name %>, :equals => "@<%= singular_name %>"
+    should_not_set_the_flash
+    should_render_template :edit
+    should_render_a_form
   end
 
-  test "should update <%= file_name %>" do
-    put :update, :id => <%= table_name %>(:one).id, :<%= file_name %> => { }
-    assert_redirected_to <%= file_name %>_path(assigns(:<%= file_name %>))
-  end
+  context "on PUT to :update" do
+    context "with no data" do
+      setup {
+        post :update, :id => <%= class_name %>.first.id, :<%= file_name %> => {}
+      }
 
-  test "should destroy <%= file_name %>" do
-    assert_difference('<%= class_name %>.count', -1) do
-      delete :destroy, :id => <%= table_name %>(:one).id
+      should_respond_with :success
+      should_assign_to :<%= singular_name %>, :equals => "@<%= singular_name %>"
+      should_render_template :edit
+      should_render_a_form
     end
 
-    assert_redirected_to <%= table_name %>_path
+    context "with data" do
+      setup {
+        put :update, :id => <%= class_name %>.first.id, :<%= file_name %> => {
+          #TODO: fill in values for update
+        }
+      }
+
+      should_respond_with 303
+      should_redirect_to "@<%= singular_name %>"
+      should_set_the_flash_to /successfully updated/
+    end
+  end
+
+  context "on DELETE to :destroy" do
+    setup {
+      delete :destroy, :id => <%= class_name %>.first.id
+    }
+
+    should_respond_with 303
+    should_redirect_to "<%= table_name %>_url"
+    should_set_the_flash_to /successfully deleted/
   end
 end

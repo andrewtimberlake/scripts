@@ -53,13 +53,14 @@ class ScaffoldGenerator < Rails::Generator::NamedBase
       for action in scaffold_views
         m.template(
           "view_#{action}.html.erb",
-          File.join('app/views', controller_class_path, controller_file_name, "#{action}.html.erb")
+          File.join('app/views', controller_class_path, controller_file_name, "#{action}.html.haml")
         )
       end
+      m.template "_add_edit_form.html.erb", File.join('app/views', controller_class_path, controller_file_name, "_add_edit_form.html.haml")
 
       # Layout and stylesheet.
-      m.template('layout.html.erb', File.join('app/views/layouts', controller_class_path, "#{controller_file_name}.html.erb"))
-      m.template('style.css', 'public/stylesheets/scaffold.css')
+      #m.template('layout.html.erb', File.join('app/views/layouts', controller_class_path, "#{controller_file_name}.html.erb"))
+      #m.template('style.css', 'public/stylesheets/scaffold.css')
 
       m.template(
         'controller.rb', File.join('app/controllers', controller_class_path, "#{controller_file_name}_controller.rb")

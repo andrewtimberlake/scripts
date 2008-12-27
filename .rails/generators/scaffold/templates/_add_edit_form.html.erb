@@ -1,0 +1,9 @@
+<% for attribute in attributes -%>
+.fld
+  =form.label :<%= attribute.name %>
+  =form.<%= attribute.field_type %> :<%= attribute.name %>, :class => 'field medium'
+<% end %>
+.buttons
+  =form.submit 'Save'
+  .or
+    =" or #{link_to 'cancel', <%= plural_name %>_path}"
