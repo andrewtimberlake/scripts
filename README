@@ -1,0 +1,10 @@
+Personal Scripts
+================
+
+Repository for storing my personal scripts which I use to make my programming easier
+Hopefully someone else can find some of them useful
+
+Ruby on Rails
+=============
+Scaffold generator used to scaffold controllers to suite my programming methods.
+Foudn in .rails/generators/scaffold
