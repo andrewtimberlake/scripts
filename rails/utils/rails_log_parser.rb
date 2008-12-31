@@ -66,8 +66,6 @@ module RailsLog
       elsif ['--help', '-h'].include?(ARGV[0])
         print_usage
       end
-    else
-      print_usage
     end
 
     file = ARGV.size > 0 ? ARGV[-1] : nil
