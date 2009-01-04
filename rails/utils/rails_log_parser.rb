@@ -14,9 +14,11 @@ module RailsLog
             if line =~ /^Completed\s*in\s*([^\s]+)\s*\(View:\s*(\d+),\s*DB:\s*(\d+)\)\s*\|\s*(\d+)\s*\w+\s*\[([^\]]+)\]/i
               info.merge!({:processing_time => $1, :view_time => $2, :db_time => $3, :status => $4, :url => $5})
               summary["#{info[:controller]}##{info[:action]}"] << info[:processing_time].to_i
-              #puts "#{info[:controller]}##{info[:action]},#{info[:processing_time]},#{info[:view_time]},#{info[:db_time]},#{info[:url]} - #{1000 / info[:processing_time].to_i} r/s"
-              waiting_for_time = false
+            elsif line =~ /Completed\s*in\s*([^\s]+)\s*\([^\)]+\)\s*\|\s*Rendering:\s*([\d\.]+)\s*\([^\)]+\)\s*\|\s*DB:\s*([\d\.]+)\s*\([^\)]+\)\s*\|\s*(\d+)\s*\w+\s*\[([^\]]+)\]/i
+              info.merge!({:processing_time => ($1.to_f * 100).to_i, :view_time => ($2.to_f * 100).to_i, :db_time => ($3.to_f * 100).to_i, :status => $4, :url => $5})
+              summary["#{info[:controller]}##{info[:action]}"] << info[:processing_time].to_i
             end
+            waiting_for_time = false
           end
         else
           if line[0..9] == 'Processing'
