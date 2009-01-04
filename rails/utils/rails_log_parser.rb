@@ -62,11 +62,16 @@ module RailsLog
   end
 
   def self.run
-    if ARGV.size > 0
-      if ARGV[0] == '--sort'
-        sort_by_key = ARGV[1]
-      elsif ['--help', '-h'].include?(ARGV[0])
+    sort_by_key = nil
+    result_limit = 0
+    ARGV.each_with_index do |arg,i|
+      if ['--sort', '-s'].include?(arg)
+        sort_by_key = ARGV[i+1]
+      elsif ['--limit', '-l'].include?(arg)
+        result_limit = ARGV[i+1].to_i
+      elsif ['--help', '-h'].include?(arg)
         print_usage
+        exit
       end
     end
 
@@ -86,6 +91,7 @@ module RailsLog
       #puts "#{s.uri} - count:#{s.count} - sum:#{s.sum} - max:#{s.max} - min:#{s.min} - avg:#{s.avg} - median:#{s.median}"
       stats_array << [s.uri, s.count, s.sum, s.max, s.min, s.avg, s.median]
     end
+    stats_array = stats_array[0..result_limit-1] if result_limit > 0
     stats_array.tabalize(['Uri', 'Calls', 'Total Time', 'Max', 'Min', 'Avg', 'Median'], [:left, :right, :right, :right, :right, :right, :right])
   end
 
@@ -97,21 +103,22 @@ Parses a rails log file and prints out call time information by controller#actio
 With no FILE, or when FILE is -, read standard input.
 
 options:
-  --help | -h      Print this help screen
-  --sort <key>     Sort the results by key
-                   valid keys are:
-                      count  - The total number of calls
-                      sum    - The total call time
-                      max    - The maximum call time
-                      min    - The minimum call time
-                      avg    - The average call time
-                      median - The median call time (default)
+  --help | -h            Print this help screen
+  --sort | -s <key>      Sort the results by key
+                         valid keys are:
+                            count  - The total number of calls
+                            sum    - The total call time
+                            max    - The maximum call time
+                            min    - The minimum call time
+                            avg    - The average call time
+                            median - The median call time (default)
+  --limit | -l <limit>   Limit the number of results displayed
 
 examples:
 
   ruby #{File.basename(__FILE__)} --sort count < $RAILS_ROOT/logs/development.log
 
-  gunzip -c $RAILS_ROOT/logs/development.log.gz | ruby #{File.basename(__FILE__)} --sort count -
+  gunzip -c $RAILS_ROOT/logs/development.log.gz | ruby #{File.basename(__FILE__)} --sort count --limit 20 -
 
 END
     exit
